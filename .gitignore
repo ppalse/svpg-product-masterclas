@@ -1,2 +1,42 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+*.tsbuildinfo
+
+# Vite
+.vite/
+*.local
+
+# Cloudflare Wrangler (local state, dev secrets)
+.wrangler/
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor and OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.sw?
+
+# Miscellaneous
 .DS_Store
 *.m4a
