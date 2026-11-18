@@ -18,8 +18,9 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <LayerCard>
       <LayerCard.Secondary>{title}</LayerCard.Secondary>
-      <LayerCard.Primary className="flex flex-wrap items-center gap-3">
-        {children}
+      <LayerCard.Primary>
+        {/* LayerCard.Primary is always a column, so the row layout lives here. */}
+        <div className="flex flex-wrap items-center gap-3">{children}</div>
       </LayerCard.Primary>
     </LayerCard>
   )

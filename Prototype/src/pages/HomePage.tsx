@@ -1,5 +1,5 @@
-import { Badge, Banner, Grid, LayerCard, Link, Loader, Text } from '@cloudflare/kumo'
-import { InfoIcon } from '@phosphor-icons/react'
+import { Badge, Banner, Grid, LayerCard, LinkButton, Loader, Text } from '@cloudflare/kumo'
+import { ArrowRightIcon, InfoIcon } from '@phosphor-icons/react'
 import { useEffect, useState } from 'react'
 import { PageHeader } from '../components/PageHeader'
 import { api, type Health } from '../lib/api'
@@ -20,13 +20,16 @@ function ApiHealthCard() {
   }, [])
 
   return (
-    <LayerCard>
-      <LayerCard.Secondary>Worker API</LayerCard.Secondary>
-      <LayerCard.Primary className="flex items-center justify-between gap-2">
-        <Text variant="mono-secondary">GET /api/health</Text>
-        {state.status === 'loading' && <Loader />}
-        {state.status === 'ok' && <Badge variant="success">Healthy</Badge>}
-        {state.status === 'error' && <Badge variant="error">{state.message}</Badge>}
+    <LayerCard className="h-full">
+      <LayerCard.Secondary className="h-[58px]">Worker API</LayerCard.Secondary>
+      {/* LayerCard.Primary is always a column, so rows need an inner wrapper. */}
+      <LayerCard.Primary className="flex-1">
+        <div className="flex items-center justify-between gap-2">
+          <Text variant="mono-secondary">GET /api/health</Text>
+          {state.status === 'loading' && <Loader />}
+          {state.status === 'ok' && <Badge variant="success">Healthy</Badge>}
+          {state.status === 'error' && <Badge variant="error">{state.message}</Badge>}
+        </div>
       </LayerCard.Primary>
     </LayerCard>
   )
@@ -63,11 +66,19 @@ export function HomePage() {
         <Grid variant="3up" gap="base">
           <ApiHealthCard />
           {quickLinks.map((card) => (
-            <LayerCard key={card.href}>
-              <LayerCard.Secondary>
-                <Link href={card.href}>{card.title}</Link>
+            <LayerCard key={card.href} className="h-full">
+              <LayerCard.Secondary className="h-[58px] justify-between">
+                {card.title}
+                <LinkButton
+                  href={card.href}
+                  variant="ghost"
+                  size="sm"
+                  shape="square"
+                  icon={ArrowRightIcon}
+                  aria-label={`Go to ${card.title}`}
+                />
               </LayerCard.Secondary>
-              <LayerCard.Primary>
+              <LayerCard.Primary className="flex-1">
                 <Text variant="secondary">{card.text}</Text>
               </LayerCard.Primary>
             </LayerCard>

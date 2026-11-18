@@ -15,7 +15,8 @@ function TopBar() {
     .map((match) => ({ label: match.handle!.crumb!, href: match.pathname }))
 
   return (
-    <header className="sticky top-0 z-10 flex h-12 shrink-0 items-center gap-3 border-b border-kumo-line bg-kumo-base px-4">
+    // 58px matches Sidebar.Header so the two bottom borders form one line.
+    <header className="sticky top-0 z-10 flex h-[58px] shrink-0 items-center gap-3 border-b border-kumo-line bg-kumo-base px-4 sm:px-8">
       {isMobile && <Sidebar.Trigger />}
       <Breadcrumbs size="sm">
         {crumbs.map((crumb, index) => (
@@ -35,9 +36,11 @@ function TopBar() {
 
 export function AppShell() {
   return (
-    <Sidebar.Provider defaultOpen collapsible="icon">
+    // Fixed viewport height: the sidebar always spans the screen and only the
+    // main column scrolls, as in the Cloudflare dashboard.
+    <Sidebar.Provider defaultOpen collapsible="icon" className="h-svh">
       <AppSidebar />
-      <div className="flex min-w-0 flex-1 flex-col bg-kumo-canvas">
+      <div className="flex min-w-0 flex-1 flex-col overflow-y-auto bg-kumo-canvas">
         <TopBar />
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-8">
           <Outlet />

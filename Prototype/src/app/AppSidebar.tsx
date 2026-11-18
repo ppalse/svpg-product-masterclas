@@ -97,7 +97,8 @@ export function AppSidebar() {
         ))}
       </Sidebar.Content>
 
-      <Sidebar.Footer>
+      {/* Pinned above the footer; padding mirrors Sidebar.Content so icons line up. */}
+      <div className="shrink-0 border-t border-kumo-line px-[11px] py-3 transition-[padding] duration-(--sidebar-animation-duration) group-not-data-[state=collapsed]/sidebar:px-3.5">
         <Sidebar.Menu>
           <Sidebar.MenuButton
             icon={GearIcon}
@@ -115,6 +116,10 @@ export function AppSidebar() {
             {themeLabel[preference]}
           </Sidebar.MenuButton>
         </Sidebar.Menu>
+      </div>
+
+      {/* Kumo's footer is a fixed-height row sized for the collapse button only. */}
+      <Sidebar.Footer>
         <Sidebar.Trigger />
       </Sidebar.Footer>
     </Sidebar>
