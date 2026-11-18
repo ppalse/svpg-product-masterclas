@@ -7,6 +7,23 @@
 @import "@cloudflare/kumo/styles";
 @import "tailwindcss";
 
+/*
+ * Trainline brand tokens for the practicum screens (from the brand
+ * guidelines). The app shell itself keeps using Kumo's semantic tokens.
+ */
+@theme {
+  --color-tl-mint: #00a88f;
+  --color-tl-navy: #160078;
+  --color-tl-amber: #ff991f;
+  --color-tl-green: #00875a;
+  --color-tl-red: #de350b;
+  --color-tl-light-mint: #e3f7f4;
+  --color-tl-soft-grey: #f4f5f7;
+  --color-tl-mid-grey: #6b778c;
+  --color-tl-dark-grey: #253858;
+  --font-tl: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
 @layer base {
   html,
   body,

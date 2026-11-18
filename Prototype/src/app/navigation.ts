@@ -4,6 +4,7 @@ import {
   FolderIcon,
   HouseIcon,
   SquaresFourIcon,
+  TrainIcon,
 } from '@phosphor-icons/react'
 
 /**
@@ -35,6 +36,12 @@ export interface NavGroup {
 export const navigation: NavGroup[] = [
   {
     items: [{ label: 'Overview', icon: HouseIcon, href: '/' }],
+  },
+  {
+    label: 'Practicum',
+    items: [
+      { label: 'Disruption journey', icon: TrainIcon, href: '/prototype/disruption' },
+    ],
   },
   {
     label: 'Workspace',
