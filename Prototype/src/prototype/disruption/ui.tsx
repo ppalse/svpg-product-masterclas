@@ -1,7 +1,8 @@
 import type { Icon } from '@phosphor-icons/react'
 import { ArrowLeftIcon } from '@phosphor-icons/react'
-import { createContext, useContext, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
+import { journey } from './data'
 import { buttonStyles } from './styles'
 
 /**
@@ -10,17 +11,56 @@ import { buttonStyles } from './styles'
  * stand in for the Trainline app.
  */
 
-const FlowBaseContext = createContext('/prototype/disruption')
+/** Which version of screen 1 the tester started from: cards ('') or timeline. */
+type Home = '' | 'timeline'
+type FlowScreen = Home | 'options' | 'booked'
 
-export function FlowBase({ base, children }: { base: string; children: ReactNode }) {
-  return <FlowBaseContext.Provider value={base}>{children}</FlowBaseContext.Provider>
+interface FlowContext {
+  base: string
+  home: Home
+  setHome: (home: Home) => void
 }
 
-/** Builds a link inside whichever layout (framed or full screen) is in use. */
+const FlowBaseContext = createContext<FlowContext>({
+  base: '/prototype/disruption',
+  home: '',
+  setHome: () => {},
+})
+
+export function FlowBase({ base, children }: { base: string; children: ReactNode }) {
+  const [home, setHome] = useState<Home>('')
+  const value = useMemo(() => ({ base, home, setHome }), [base, home])
+  return <FlowBaseContext.Provider value={value}>{children}</FlowBaseContext.Provider>
+}
+
+/**
+ * Builds a link inside whichever layout (framed or full screen) is in use.
+ * `path('')` and `path('options')` stay in the version (cards or timeline)
+ * the tester started from.
+ */
 // eslint-disable-next-line react-refresh/only-export-components
 export function useFlowPath() {
-  const base = useContext(FlowBaseContext)
-  return (screen: '' | 'options' | 'booked') => (screen ? `${base}/${screen}` : base)
+  const { base, home } = useContext(FlowBaseContext)
+  return (screen: FlowScreen) => {
+    const start = home ? `${base}/${home}` : base
+    switch (screen) {
+      case '':
+        return start
+      case 'timeline':
+        return `${base}/timeline`
+      case 'options':
+        return `${start}/options`
+      case 'booked':
+        return `${base}/booked`
+    }
+  }
+}
+
+/** Called by screens 1 and 2 of each version so later screens link back to it. */
+// eslint-disable-next-line react-refresh/only-export-components
+export function useMarkHome(home: Home) {
+  const { setHome } = useContext(FlowBaseContext)
+  useEffect(() => setHome(home), [home, setHome])
 }
 
 type Tone = 'warning' | 'success' | 'neutral'
@@ -111,6 +151,58 @@ export function FakeNotice({ message, onClose }: { message: string; onClose: () 
       <button type="button" onClick={onClose} className="font-semibold text-tl-light-mint">
         OK
       </button>
+    </div>
+  )
+}
+
+function TrustSheet({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="absolute inset-0 z-20 flex items-end bg-tl-navy/40" onClick={onClose}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="trust-title"
+        className="w-full rounded-t-2xl bg-white p-5 pb-6"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <h2 id="trust-title" className="mb-2 text-lg font-semibold text-tl-navy">
+          Where these times come from
+        </h2>
+        <p className="mb-5 text-[15px] leading-relaxed text-tl-dark-grey">
+          We use the same live feed as station departure boards. If our times and the board ever
+          disagree, trust the board and tell us.
+        </p>
+        <button type="button" className={buttonStyles.primary} onClick={onClose}>
+          Got it
+        </button>
+      </div>
+    </div>
+  )
+}
+
+/** Route title plus the data-source line and its "Why trust this?" sheet. */
+export function JourneyHeading() {
+  const [showTrust, setShowTrust] = useState(false)
+  const { ticket } = journey
+
+  return (
+    <div>
+      <h2 className="text-xl font-semibold leading-tight text-tl-navy">
+        {ticket.from} to {ticket.to}
+      </h2>
+      <p className="mt-1 flex flex-wrap items-center gap-x-2 text-[13px] text-tl-mid-grey">
+        <span>
+          {journey.dataSource} · updated {journey.updatedAt}
+        </span>
+        <button
+          type="button"
+          onClick={() => setShowTrust(true)}
+          className="font-semibold text-tl-mint underline-offset-2 hover:underline"
+        >
+          Why trust this?
+        </button>
+      </p>
+      {showTrust && <TrustSheet onClose={() => setShowTrust(false)} />}
     </div>
   )
 }

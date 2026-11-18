@@ -1,8 +1,10 @@
 import { createBrowserRouter, type RouteObject } from 'react-router'
 import { BookedScreen } from '../prototype/disruption/BookedScreen'
 import { JourneyScreen } from '../prototype/disruption/JourneyScreen'
+import { JourneyTimelineScreen } from '../prototype/disruption/JourneyTimelineScreen'
 import { FramedFlowLayout, FullScreenFlowLayout } from '../prototype/disruption/layouts'
 import { OptionsScreen } from '../prototype/disruption/OptionsScreen'
+import { OptionsTimelineScreen } from '../prototype/disruption/OptionsTimelineScreen'
 import { ComponentsPage } from '../pages/ComponentsPage'
 import { HomePage } from '../pages/HomePage'
 import { NotFoundPage } from '../pages/NotFoundPage'
@@ -13,9 +15,17 @@ import { AppShell, type RouteHandle } from './AppShell'
 
 const crumb = (label: string): RouteHandle => ({ crumb: label })
 
-/** The three practicum screens, shared by the framed and full-screen layouts. */
+/** The practicum screens, shared by the framed and full-screen layouts. */
 const disruptionScreens: RouteObject[] = [
   { index: true, element: <JourneyScreen /> },
+  {
+    path: 'timeline',
+    handle: crumb('Timeline'),
+    children: [
+      { index: true, element: <JourneyTimelineScreen /> },
+      { path: 'options', element: <OptionsTimelineScreen />, handle: crumb('Options') },
+    ],
+  },
   { path: 'options', element: <OptionsScreen />, handle: crumb('Options') },
   { path: 'booked', element: <BookedScreen />, handle: crumb('Booked') },
 ]

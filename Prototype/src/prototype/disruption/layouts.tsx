@@ -22,8 +22,10 @@ function Screen({ className, children }: { className: string; children: ReactNod
 }
 
 const screens = [
-  { label: '1. Your journey today', path: '' },
-  { label: '2. Your options', path: '/options' },
+  { label: '1a. Your journey today (cards)', path: '' },
+  { label: '1b. Your journey today (timeline)', path: '/timeline' },
+  { label: '2a. Your options (cards)', path: '/options' },
+  { label: '2b. Your options (timeline)', path: '/timeline/options' },
   { label: '3. Booked onto the 12:22', path: '/booked' },
 ]
 
@@ -32,6 +34,8 @@ const fakes = [
   'No real rebooking, payment or operator connection.',
   '"Open chat" and "Show ticket" only show a message.',
   'No push notification: screen 1 starts as if the app was just opened.',
+  'Walking directions at York are made up; we have no station map data.',
+  'Options and Booked link back to whichever screen 1 you started from.',
 ]
 
 /** Inside the app shell: phone frame plus a facilitator panel. */
@@ -44,7 +48,11 @@ export function FramedFlowLayout() {
         title="Disruption journey"
         description="Practicum prototype: one live page with status, data source and options when a connection is at risk."
         actions={
-          <LinkButton href={FULLSCREEN_BASE} icon={ArrowsOutIcon} target="_blank">
+          <LinkButton
+            href={pathname.replace(FRAMED_BASE, FULLSCREEN_BASE)}
+            icon={ArrowsOutIcon}
+            target="_blank"
+          >
             Open full screen
           </LinkButton>
         }

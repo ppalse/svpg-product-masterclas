@@ -50,3 +50,9 @@ export const journey = {
     minutesBeforeMeeting: 42,
   },
 } as const
+
+/** "13:48" → minutes since midnight, for working out gaps between times. */
+export function toMinutes(time: string) {
+  const [hours, minutes] = time.split(':').map(Number)
+  return hours * 60 + minutes
+}

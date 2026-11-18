@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { journey } from './data'
-import { AppBar, ButtonLink, Card, FakeNotice, useFlowPath } from './ui'
+import { AppBar, ButtonLink, Card, FakeNotice, useFlowPath, useMarkHome } from './ui'
 import { buttonStyles } from './styles'
 
 const { leg2, connection, nextTrain } = journey
 
-/** Screen 2 — options with arrival time and cost, one recommended. */
+/** Screen 2a — options with arrival time and cost, one recommended. */
 export function OptionsScreen() {
   const path = useFlowPath()
+  useMarkHome('')
   const [notice, setNotice] = useState<string | null>(null)
 
   return (

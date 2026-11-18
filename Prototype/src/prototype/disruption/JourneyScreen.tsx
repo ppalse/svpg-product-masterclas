@@ -1,40 +1,22 @@
 import { TrainIcon, WarningIcon } from '@phosphor-icons/react'
-import { useState } from 'react'
 import { journey } from './data'
-import { AppBar, Banner, ButtonLink, Card, StatusLabel, useFlowPath } from './ui'
-import { buttonStyles } from './styles'
+import {
+  AppBar,
+  Banner,
+  ButtonLink,
+  Card,
+  JourneyHeading,
+  StatusLabel,
+  useFlowPath,
+  useMarkHome,
+} from './ui'
 
-const { leg1, leg2, connection, ticket } = journey
+const { leg1, leg2, connection } = journey
 
-function TrustSheet({ onClose }: { onClose: () => void }) {
-  return (
-    <div className="absolute inset-0 z-20 flex items-end bg-tl-navy/40" onClick={onClose}>
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="trust-title"
-        className="w-full rounded-t-2xl bg-white p-5 pb-6"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <h2 id="trust-title" className="mb-2 text-lg font-semibold text-tl-navy">
-          Where these times come from
-        </h2>
-        <p className="mb-5 text-[15px] leading-relaxed text-tl-dark-grey">
-          We use the same live feed as station departure boards. If our times and the board ever
-          disagree, trust the board and tell us.
-        </p>
-        <button type="button" className={buttonStyles.primary} onClick={onClose}>
-          Got it
-        </button>
-      </div>
-    </div>
-  )
-}
-
-/** Screen 1 — the key screen: live status, data source, and the connection risk. */
+/** Screen 1a — the key screen as cards: live status, data source, and the connection risk. */
 export function JourneyScreen() {
   const path = useFlowPath()
-  const [showTrust, setShowTrust] = useState(false)
+  useMarkHome('')
 
   return (
     <>
@@ -44,23 +26,7 @@ export function JourneyScreen() {
       <AppBar title="Your journey today" />
 
       <div className="flex flex-col gap-3 p-4">
-        <div>
-          <h2 className="text-xl font-semibold leading-tight text-tl-navy">
-            {ticket.from} to {ticket.to}
-          </h2>
-          <p className="mt-1 flex flex-wrap items-center gap-x-2 text-[13px] text-tl-mid-grey">
-            <span>
-              {journey.dataSource} · updated {journey.updatedAt}
-            </span>
-            <button
-              type="button"
-              onClick={() => setShowTrust(true)}
-              className="font-semibold text-tl-mint underline-offset-2 hover:underline"
-            >
-              Why trust this?
-            </button>
-          </p>
-        </div>
+        <JourneyHeading />
 
         <Card>
           <p className="flex items-center gap-2 text-[13px] font-semibold text-tl-dark-grey">
@@ -107,8 +73,6 @@ export function JourneyScreen() {
 
         <ButtonLink to={path('options')}>See your options</ButtonLink>
       </div>
-
-      {showTrust && <TrustSheet onClose={() => setShowTrust(false)} />}
     </>
   )
 }
