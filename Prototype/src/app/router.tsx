@@ -26,6 +26,18 @@ const disruptionScreens: RouteObject[] = [
       { path: 'options', element: <OptionsTimelineScreen />, handle: crumb('Options') },
     ],
   },
+  {
+    path: 'board',
+    handle: crumb('Timeline + board'),
+    children: [
+      { index: true, element: <JourneyTimelineScreen compareBoard /> },
+      {
+        path: 'options',
+        element: <OptionsTimelineScreen compareBoard />,
+        handle: crumb('Options'),
+      },
+    ],
+  },
   { path: 'options', element: <OptionsScreen />, handle: crumb('Options') },
   { path: 'booked', element: <BookedScreen />, handle: crumb('Booked') },
 ]

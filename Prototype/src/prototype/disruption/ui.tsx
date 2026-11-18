@@ -11,8 +11,8 @@ import { buttonStyles } from './styles'
  * stand in for the Trainline app.
  */
 
-/** Which version of screen 1 the tester started from: cards ('') or timeline. */
-export type Home = '' | 'timeline'
+/** Which version the tester started from: cards (''), timeline, or timeline + board. */
+export type Home = '' | 'timeline' | 'board'
 type FlowScreen = Home | 'options' | 'booked'
 
 interface FlowContext {
@@ -35,8 +35,7 @@ export function FlowBase({ base, children }: { base: string; children: ReactNode
 
 /**
  * Builds a link inside whichever layout (framed or full screen) is in use.
- * `path('')` and `path('options')` stay in the version (cards or timeline)
- * the tester started from.
+ * `path('')` and `path('options')` stay in the version the tester started from.
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function useFlowPath() {
@@ -47,7 +46,8 @@ export function useFlowPath() {
       case '':
         return start
       case 'timeline':
-        return `${base}/timeline`
+      case 'board':
+        return `${base}/${screen}`
       case 'options':
         return `${start}/options`
       case 'booked':
@@ -162,28 +162,39 @@ export function FakeNotice({ message, onClose }: { message: string; onClose: () 
   )
 }
 
-function TrustSheet({ onClose }: { onClose: () => void }) {
+/** A sheet that slides up over the screen; tap outside or the button to close. */
+export function BottomSheet({ title, onClose, children }: {
+  title: string
+  onClose: () => void
+  children: ReactNode
+}) {
   return (
     <div className="absolute inset-0 z-20 flex items-end bg-tl-navy/40" onClick={onClose}>
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="trust-title"
+        aria-labelledby="sheet-title"
         className="w-full rounded-t-2xl bg-white p-5 pb-6"
         onClick={(event) => event.stopPropagation()}
       >
-        <h2 id="trust-title" className="mb-2 text-lg font-semibold text-tl-navy">
-          Where these times come from
+        <h2 id="sheet-title" className="mb-2 text-lg font-semibold text-tl-navy">
+          {title}
         </h2>
-        <p className="mb-5 text-[15px] leading-relaxed text-tl-dark-grey">
-          We use the same live feed as station departure boards. If our times and the board ever
-          disagree, trust the board and tell us.
-        </p>
+        <div className="mb-5 text-[15px] leading-relaxed text-tl-dark-grey">{children}</div>
         <button type="button" className={buttonStyles.primary} onClick={onClose}>
           Got it
         </button>
       </div>
     </div>
+  )
+}
+
+function TrustSheet({ onClose }: { onClose: () => void }) {
+  return (
+    <BottomSheet title="Where these times come from" onClose={onClose}>
+      We use the same live feed as station departure boards. If our times and the board ever
+      disagree, trust the board and tell us.
+    </BottomSheet>
   )
 }
 

@@ -49,6 +49,17 @@ export const journey = {
     extraCost: '£0.00',
     minutesBeforeMeeting: 42,
   },
+  /**
+   * What the station departure boards show. York arrival is deliberately one
+   * minute off from our 11:46, so testers see a real disagreement.
+   */
+  board: {
+    checkedAt: '11:14',
+    yorkArrival: { shows: '11:45', platform: '9' },
+    leg2Departure: { shows: 'On time', platform: '4' },
+    nextDeparture: { shows: 'On time', platform: '4' },
+    manchesterArrival: { shows: '13:18' },
+  },
 } as const
 
 /** "13:48" → minutes since midnight, for working out gaps between times. */
@@ -56,3 +67,7 @@ export function toMinutes(time: string) {
   const [hours, minutes] = time.split(':').map(Number)
   return hours * 60 + minutes
 }
+
+/** Whether the York board agrees with our arrival time. In this sample it deliberately doesn't. */
+export const yorkArrivalMatchesBoard =
+  (journey.board.yorkArrival.shows as string) === journey.leg1.expectedArrival

@@ -1,11 +1,12 @@
 import { ChatCircleIcon, CheckCircleIcon, WarningCircleIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { buttonStyles } from './styles'
+import { BoardCheck } from './board'
 import { journey, toMinutes } from './data'
 import { Stop } from './timeline'
 import { AppBar, ButtonLink, Card, FakeNotice, StatusLabel, useFlowPath, useMarkHome } from './ui'
 
-const { leg1, leg2, connection, nextTrain, meetingTime } = journey
+const { leg1, leg2, connection, nextTrain, meetingTime, board } = journey
 
 const minutesBetween = (from: string, to: string) => toMinutes(to) - toMinutes(from)
 const waitAtYork = minutesBetween(leg1.expectedArrival, nextTrain.departs)
@@ -51,10 +52,13 @@ function Outcome({ arrives, spare, ifYouMakeIt }: {
 
 /* ---------- Screen ---------- */
 
-/** Screen 2b — each option leads with its arrival time, then shows its timeline. */
-export function OptionsTimelineScreen() {
+/**
+ * Screen 2b — each option leads with its arrival time, then shows its timeline.
+ * With `compareBoard` (screen 2c) each departure also shows what the York board says.
+ */
+export function OptionsTimelineScreen({ compareBoard = false }: { compareBoard?: boolean }) {
   const path = useFlowPath()
-  useMarkHome('timeline')
+  useMarkHome(compareBoard ? 'board' : 'timeline')
   const [notice, setNotice] = useState<string | null>(null)
 
   return (
@@ -96,6 +100,13 @@ export function OptionsTimelineScreen() {
               <p className="text-[14px] text-tl-dark-grey">
                 {nextTrain.operator}, platform {nextTrain.platform}
               </p>
+              {compareBoard && (
+                <BoardCheck
+                  station={connection.station}
+                  shows={`${board.nextDeparture.shows} · Plat ${board.nextDeparture.platform}`}
+                  matches
+                />
+              )}
             </Stop>
             <Stop compact time={nextTrain.arrives} dot="end" above="ahead" below="none">
               <p className="text-[14px] font-semibold text-tl-navy">{nextTrain.to}</p>
@@ -133,6 +144,13 @@ export function OptionsTimelineScreen() {
               <p className="text-[14px] text-tl-dark-grey">
                 {leg2.operator}, platform {leg2.platform}
               </p>
+              {compareBoard && (
+                <BoardCheck
+                  station={connection.station}
+                  shows={`${board.leg2Departure.shows} · Plat ${board.leg2Departure.platform}`}
+                  matches
+                />
+              )}
             </Stop>
             <Stop compact time={leg2.arrives} dot="end" above="ahead" below="none">
               <p className="text-[14px] font-semibold text-tl-navy">{leg2.to}</p>

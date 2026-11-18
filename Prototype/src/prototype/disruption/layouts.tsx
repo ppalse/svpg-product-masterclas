@@ -21,7 +21,7 @@ function Screen({ className, children }: { className: string; children: ReactNod
   )
 }
 
-/** The two versions under test. Booked is one shared screen, listed in both. */
+/** The versions under test. Booked is one shared screen, listed in both. */
 const screenGroups: { label: string; home: Home; screens: { label: string; path: string }[] }[] = [
   {
     label: 'Cards',
@@ -38,6 +38,15 @@ const screenGroups: { label: string; home: Home; screens: { label: string; path:
     screens: [
       { label: '1. Your journey today', path: '/timeline' },
       { label: '2. Your options', path: '/timeline/options' },
+      { label: '3. Booked onto the 12:22', path: '/booked' },
+    ],
+  },
+  {
+    label: 'Timeline + board',
+    home: 'board',
+    screens: [
+      { label: '1. Your journey today', path: '/board' },
+      { label: '2. Your options', path: '/board/options' },
       { label: '3. Booked onto the 12:22', path: '/booked' },
     ],
   },
@@ -88,7 +97,8 @@ const fakes = [
   '"Open chat" and "Show ticket" only show a message.',
   'No push notification: screen 1 starts as if the app was just opened.',
   'Walking directions at York are made up; we have no station map data.',
-  'Options and Booked link back to the version (cards or timeline) you started in.',
+  'Options and Booked link back to the version you started in.',
+  'Station board values are sample data. The 1-minute York difference is deliberate.',
 ]
 
 /** Inside the app shell: phone frame plus a facilitator panel. */

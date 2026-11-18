@@ -1,5 +1,6 @@
 import { TicketIcon, WarningIcon } from '@phosphor-icons/react'
-import { journey } from './data'
+import { BoardCheck, BoardSummary } from './board'
+import { journey, yorkArrivalMatchesBoard } from './data'
 import { Stop } from './timeline'
 import {
   AppBar,
@@ -11,12 +12,15 @@ import {
   useMarkHome,
 } from './ui'
 
-const { leg1, leg2, connection, ticket } = journey
+const { leg1, leg2, connection, ticket, board } = journey
 
-/** Screen 1b — the same journey as a timeline: booked trains, the change, and where to go. */
-export function JourneyTimelineScreen() {
+/**
+ * Screen 1b — the same journey as a timeline: booked trains, the change, and where to go.
+ * With `compareBoard` (screen 1c) each upcoming stop also shows what the station board says.
+ */
+export function JourneyTimelineScreen({ compareBoard = false }: { compareBoard?: boolean }) {
   const path = useFlowPath()
-  useMarkHome('timeline')
+  useMarkHome(compareBoard ? 'board' : 'timeline')
 
   return (
     <>
@@ -27,6 +31,8 @@ export function JourneyTimelineScreen() {
 
       <div className="flex flex-col gap-4 p-4">
         <JourneyHeading />
+
+        {compareBoard && <BoardSummary />}
 
         <p className="flex items-center gap-2 text-[13px] text-tl-dark-grey">
           <TicketIcon size={18} className="shrink-0 text-tl-mint" aria-hidden />
@@ -56,6 +62,14 @@ export function JourneyTimelineScreen() {
           >
             <p className="text-[15px] font-semibold text-tl-navy">Get off at {connection.station}</p>
             <p className="text-[13px] text-tl-dark-grey">Arriving platform {leg1.platform}</p>
+            {compareBoard && (
+              <BoardCheck
+                station={connection.station}
+                shows={`${board.yorkArrival.shows} · Plat ${board.yorkArrival.platform}`}
+                matches={yorkArrivalMatchesBoard}
+                ours={leg1.expectedArrival}
+              />
+            )}
           </Stop>
 
           <Stop dot="walk" above="change" below="change">
@@ -82,6 +96,13 @@ export function JourneyTimelineScreen() {
               <StatusLabel tone="success">On time</StatusLabel>
               <span className="text-[13px] text-tl-dark-grey">Platform {leg2.platform}</span>
             </div>
+            {compareBoard && (
+              <BoardCheck
+                station={connection.station}
+                shows={`${board.leg2Departure.shows} · Plat ${board.leg2Departure.platform}`}
+                matches
+              />
+            )}
             <p className="mt-1 text-[13px] font-semibold text-tl-dark-grey">
               You'll probably miss this train
             </p>
@@ -90,6 +111,9 @@ export function JourneyTimelineScreen() {
           <Stop time={leg2.arrives} dot="end" above="ahead" below="none">
             <p className="text-[15px] font-semibold text-tl-navy">{leg2.to}</p>
             <p className="text-[13px] text-tl-mid-grey">Your meeting is at {journey.meetingTime}</p>
+            {compareBoard && (
+              <BoardCheck station="Manchester" shows={board.manchesterArrival.shows} matches />
+            )}
           </Stop>
         </ol>
 
