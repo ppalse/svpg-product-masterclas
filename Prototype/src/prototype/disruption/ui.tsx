@@ -12,7 +12,7 @@ import { buttonStyles } from './styles'
  */
 
 /** Which version of screen 1 the tester started from: cards ('') or timeline. */
-type Home = '' | 'timeline'
+export type Home = '' | 'timeline'
 type FlowScreen = Home | 'options' | 'booked'
 
 interface FlowContext {
@@ -54,6 +54,13 @@ export function useFlowPath() {
         return `${base}/booked`
     }
   }
+}
+
+/** Which version the tester is in, and a way to switch it (used by the facilitator panel). */
+// eslint-disable-next-line react-refresh/only-export-components
+export function useFlowHome() {
+  const { home, setHome } = useContext(FlowBaseContext)
+  return { home, setHome }
 }
 
 /** Called by screens 1 and 2 of each version so later screens link back to it. */

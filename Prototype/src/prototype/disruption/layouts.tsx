@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import { Outlet, useLocation } from 'react-router'
 import { PageHeader } from '../../components/PageHeader'
 import { journey } from './data'
-import { FlowBase } from './ui'
+import { FlowBase, useFlowHome, type Home } from './ui'
 
 export const FRAMED_BASE = '/prototype/disruption'
 export const FULLSCREEN_BASE = '/preview/disruption'
@@ -21,13 +21,66 @@ function Screen({ className, children }: { className: string; children: ReactNod
   )
 }
 
-const screens = [
-  { label: '1a. Your journey today (cards)', path: '' },
-  { label: '1b. Your journey today (timeline)', path: '/timeline' },
-  { label: '2a. Your options (cards)', path: '/options' },
-  { label: '2b. Your options (timeline)', path: '/timeline/options' },
-  { label: '3. Booked onto the 12:22', path: '/booked' },
+/** The two versions under test. Booked is one shared screen, listed in both. */
+const screenGroups: { label: string; home: Home; screens: { label: string; path: string }[] }[] = [
+  {
+    label: 'Cards',
+    home: '',
+    screens: [
+      { label: '1. Your journey today', path: '' },
+      { label: '2. Your options', path: '/options' },
+      { label: '3. Booked onto the 12:22', path: '/booked' },
+    ],
+  },
+  {
+    label: 'Timeline',
+    home: 'timeline',
+    screens: [
+      { label: '1. Your journey today', path: '/timeline' },
+      { label: '2. Your options', path: '/timeline/options' },
+      { label: '3. Booked onto the 12:22', path: '/booked' },
+    ],
+  },
 ]
+
+/** Facilitator links to every screen, grouped by version. */
+function ScreenList() {
+  const { pathname } = useLocation()
+  const { home, setHome } = useFlowHome()
+
+  return (
+    <div className="flex flex-col gap-4">
+      {screenGroups.map((group) => (
+        <section key={group.label} aria-labelledby={`screens-${group.label}`}>
+          <h3
+            id={`screens-${group.label}`}
+            className="mb-2 text-xs font-semibold uppercase tracking-wide text-kumo-subtle"
+          >
+            {group.label}
+          </h3>
+          <ul className="flex flex-col gap-2">
+            {group.screens.map((screen) => {
+              const href = `${FRAMED_BASE}${screen.path}`
+              // The shared Booked screen counts as current only in the version you're in.
+              const current = pathname === href && home === group.home
+              return (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    variant={current ? 'current' : 'inline'}
+                    onClick={() => setHome(group.home)}
+                  >
+                    {screen.label}
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+      ))}
+    </div>
+  )
+}
 
 const fakes = [
   'All times are fixed sample data; "updated 11:14" never changes.',
@@ -35,7 +88,7 @@ const fakes = [
   '"Open chat" and "Show ticket" only show a message.',
   'No push notification: screen 1 starts as if the app was just opened.',
   'Walking directions at York are made up; we have no station map data.',
-  'Options and Booked link back to whichever screen 1 you started from.',
+  'Options and Booked link back to the version (cards or timeline) you started in.',
 ]
 
 /** Inside the app shell: phone frame plus a facilitator panel. */
@@ -73,18 +126,7 @@ export function FramedFlowLayout() {
           <LayerCard>
             <LayerCard.Secondary>Screens</LayerCard.Secondary>
             <LayerCard.Primary>
-              <ul className="flex flex-col gap-2">
-                {screens.map((screen) => {
-                  const href = `${FRAMED_BASE}${screen.path}`
-                  return (
-                    <li key={href}>
-                      <Link href={href} variant={pathname === href ? 'current' : 'inline'}>
-                        {screen.label}
-                      </Link>
-                    </li>
-                  )
-                })}
-              </ul>
+              <ScreenList />
             </LayerCard.Primary>
           </LayerCard>
 
